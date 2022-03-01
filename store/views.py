@@ -1,6 +1,6 @@
 from django.http import Http404
 import json
-import datetime
+from datetime import date, timedelta
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -133,7 +133,9 @@ def search_items(request, pk):
 
 @api_view(['GET'])
 def inventoriesView(request):
-    obj = Inventories.objects.filter(date_entered__gte=datetime.date.today())
+    today = date.today()
+    yesterday = today - timedelta(days=1)
+    obj = Inventories.objects.filter(date_entered__gte=yesterday)
 
     df = pd.DataFrame.from_records(obj.values())
 
@@ -147,5 +149,5 @@ def inventoriesView(request):
 
     serializer = data.to_json(orient='records')
     parsed = json.loads(serializer)
-    print(data.head())
+    # print(data.head())
     return Response(parsed)

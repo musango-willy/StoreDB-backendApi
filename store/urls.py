@@ -13,3 +13,4 @@ urlpatterns = [
     path('invent', views.inventoriesView),
     
 ]
+
