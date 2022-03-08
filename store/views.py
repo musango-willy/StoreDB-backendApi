@@ -14,7 +14,9 @@ from .models import (
     Category_group, Category, Products, Sale_Products,
     Inventories
 )
-from store import serializers
+# from store import serializers
+from django.utils import timezone
+from django.utils.timezone import get_current_timezone
 
 
 class CategoryGroupView(APIView):
@@ -133,8 +135,8 @@ def search_items(request, pk):
 
 @api_view(['GET'])
 def inventoriesView(request):
-    today = date.today()
-    yesterday = today - timedelta(days=1)
+    today = timezone.now()#.date()
+    yesterday = today - timedelta(days=3)
     obj = Inventories.objects.filter(date_entered__gte=yesterday)
 
     df = pd.DataFrame.from_records(obj.values())
@@ -144,7 +146,7 @@ def inventoriesView(request):
 
     data['time_data'] = data['time_data'].dt.strftime('%H:%M')
 
-    # data = data[data.price != 0]
+    data = data[data.price != 0]
     
 
     serializer = data.to_json(orient='records')
