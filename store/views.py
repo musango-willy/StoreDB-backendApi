@@ -1,22 +1,28 @@
 from django.http import Http404
 import json
-from datetime import date, timedelta
+# import pytz
+from datetime import datetime, date, timedelta
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 import pandas as pd
+from django.utils import timezone
+
+# from store import serializers
 from .serializers import (
     CategorygroupSerailizer, CategorySerailizer, ProductSerailizer,
-    Sale_ProductSerailizer, Sale_InventorySerailizer
+    Sale_ProductSerailizer, Sale_InventorySerailizer,Category_relserializer
 )
+
+# from store import models
 from .models import (
     Category_group, Category, Products, Sale_Products,
     Inventories
 )
-# from store import serializers
 from django.utils import timezone
-from django.utils.timezone import get_current_timezone
+# from django.utils.timezone import get_current_timezone
+
 
 
 class CategoryGroupView(APIView):
@@ -26,6 +32,30 @@ class CategoryGroupView(APIView):
 
         return Response(serializer.data)
 
+    def post(self, request, format=None):
+        data = request.data
+        serializer = self.add_post(data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def add_post(self, data):
+        if isinstance(data, list):
+            serializer = CategorygroupSerailizer(data=data, many=True)
+
+            return serializer
+        else:
+            serializer = CategorygroupSerailizer(data=data)
+            return serializer
+
+# Category group + it relational models
+@api_view(['GET'])
+def category_relview(request):
+        groups = Category_group.objects.all()
+        serializer = Category_relserializer(groups, many=True)
+        return Response(serializer.data)
 
 class CategoryView(APIView):
     def get(self, request, format=None):
@@ -35,15 +65,22 @@ class CategoryView(APIView):
         return Response(serializer.data)
      
     def post(self, request, format=None):
-        serializer = CategorySerailizer(data=request.data, many=True)
-
+        data = request.data
+        serializer = self.add_post(data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def add_post(self, data):
+        if isinstance(data, list):
+            serializer = CategorySerailizer(data=data, many=True)
 
+            return serializer
+        else:
+            serializer = CategorySerailizer(data=data)
+            return serializer
 
 class ProductsView(APIView):
     def get_object(self,pk):
@@ -135,9 +172,9 @@ def search_items(request, pk):
 
 @api_view(['GET'])
 def inventoriesView(request):
-    today = timezone.now()#.date()
-    yesterday = today - timedelta(days=3)
-    obj = Inventories.objects.filter(date_entered__gte=yesterday)
+    today = timezone.now().today()
+    # yesterday = today - timedelta(days=7)
+    obj = Inventories.objects.filter(date_entered__gte=today.date())
 
     df = pd.DataFrame.from_records(obj.values())
 

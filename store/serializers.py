@@ -1,3 +1,4 @@
+from unicodedata import category
 from rest_framework import serializers
 from .models import (
     Category_group, Category, Products, Sale_Products,
@@ -8,7 +9,7 @@ class CategorygroupSerailizer(serializers.ModelSerializer):
     class Meta:
         model = Category_group
         fields = [
-            'name', 'code'
+            'id', 'name', 'code'
         ]
 
 class CategorySerailizer(serializers.ModelSerializer):
@@ -17,6 +18,27 @@ class CategorySerailizer(serializers.ModelSerializer):
         fields = [
             'name', 'code', 'category_group'
         ]
+
+
+# Category group model nested serializer 
+
+class CategoryNested(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = [
+            'id', 'name', 'code', 'category_group'
+        ]
+
+
+class Category_relserializer(serializers.ModelSerializer):
+    category_group = CategoryNested(many=True, read_only=True)
+
+    class Meta:
+        model = Category_group
+        fields = ['id', 'name', 'code', 'category_group']
+
+
+
 
 class ProductSerailizer(serializers.ModelSerializer):
     class Meta:

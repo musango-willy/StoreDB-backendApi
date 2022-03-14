@@ -12,7 +12,7 @@ class Category_group(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=100)
     code = models.IntegerField(blank=True, null=True)
-    category_group = models.ForeignKey(Category_group, on_delete=models.CASCADE)
+    category_group = models.ForeignKey(Category_group,related_name='category_group', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name + ' | ' + str(self.code)
