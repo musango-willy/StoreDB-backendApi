@@ -12,7 +12,8 @@ from django.utils import timezone
 # from store import serializers
 from .serializers import (
     CategorygroupSerailizer, CategorySerailizer, ProductSerailizer,
-    Sale_ProductSerailizer, Sale_InventorySerailizer,Category_relserializer
+    Sale_ProductSerailizer, Sale_InventorySerailizer,
+    Category_relserializer, Categorygroup_serializer
 )
 
 # from store import models
@@ -56,6 +57,18 @@ def category_relview(request):
         groups = Category_group.objects.all()
         serializer = Category_relserializer(groups, many=True)
         return Response(serializer.data)
+
+# @api_view(['GET'])
+class category_rel_view(APIView):
+    def get(self, request):
+        cat = Category_group.objects.all()
+        serializer = Categorygroup_serializer(cat, many=True)
+        return Response(serializer.data)
+
+
+
+
+
 
 class CategoryView(APIView):
     def get(self, request, format=None):
@@ -173,8 +186,8 @@ def search_items(request, pk):
 @api_view(['GET'])
 def inventoriesView(request):
     today = timezone.now().today()
-    # yesterday = today - timedelta(days=7)
-    obj = Inventories.objects.filter(date_entered__gte=today.date())
+    yesterday = today - timedelta(days=3)
+    obj = Inventories.objects.filter(date_entered__gte=yesterday)
 
     df = pd.DataFrame.from_records(obj.values())
 
