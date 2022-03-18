@@ -27,7 +27,7 @@ class Products(models.Model):
 
 class Sale_Products(models.Model):
     name = models.CharField(max_length=100)
-    code = models.IntegerField()
+    code = models.IntegerField(null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     price = models.FloatField()
     quantity_category = models.CharField(max_length=100)

@@ -155,8 +155,11 @@ class InventoriesView(APIView):
      
     def post(self, request, format=None):
         data = request.data
+        for df in data:
+            print(df)
         serializer = self.add_post(data)
         if serializer.is_valid():
+                
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -183,6 +186,7 @@ def search_items(request, pk):
         serializer = Sale_ProductSerailizer(item, many=True)
         return Response(serializer.data)
 
+
 @api_view(['GET'])
 def inventoriesView(request):
     today = timezone.now().today()
@@ -203,3 +207,21 @@ def inventoriesView(request):
     parsed = json.loads(serializer)
     # print(data.head())
     return Response(parsed)
+
+@api_view(["POST"])
+def products_post(request):
+    data = request.data
+    data.pop("sellprice")
+    serializer = ProductSerailizer(data=data)
+    if serializer.is_valid():
+        serializer.save()
+
+        product = request.data
+
+        product.pop("price")
+
+    print('\n')
+    print(data)
+    print('\n')
+
+    return Response({'response': 'gatchu ):'})

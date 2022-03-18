@@ -55,7 +55,7 @@ class Sale_ProductSerailizer(serializers.ModelSerializer):
         model = Sale_Products
         fields = [
             'name', 'code', 'category', 'price',
-            'quantity_category', 'date_entered'
+            'quantity_category'#
         ]
 
 class Sale_InventorySerailizer(serializers.ModelSerializer):
