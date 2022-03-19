@@ -11,6 +11,10 @@ urlpatterns = [
     path('inventories', views.InventoriesView.as_view()),
     path('get_item/<str:pk>', views.search_items),
     path('invent', views.inventoriesView),
+    path('group_relations', views.category_relview),
+    path('post_products', views.products_post),
+    path('cat_products', views.category_rel_view.as_view()),
+
     
 ]
 

@@ -12,7 +12,7 @@ class Category_group(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=100)
     code = models.IntegerField(blank=True, null=True)
-    category_group = models.ForeignKey(Category_group, on_delete=models.CASCADE)
+    category_group = models.ForeignKey(Category_group,related_name='category_group', on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name + ' | ' + str(self.code)
@@ -27,7 +27,7 @@ class Products(models.Model):
 
 class Sale_Products(models.Model):
     name = models.CharField(max_length=100)
-    code = models.IntegerField()
+    code = models.IntegerField(null=True, blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     price = models.FloatField()
     quantity_category = models.CharField(max_length=100)
